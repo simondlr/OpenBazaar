@@ -226,10 +226,12 @@ class CryptoTransportLayer(TransportLayer):
 
     def start_ip_address_checker(self):
         '''Checks for possible public IP change'''
+        # TODO: Raise callback interval
         self.caller = PeriodicCallback(self._ip_updater_periodic_callback, 5000, ioloop.IOLoop.instance())
         self.caller.start()
 
     def _ip_updater_periodic_callback(self):
+        # TODO: Use DHT Peers to check what's current external IP adddress via ping/pong
         try:
             r = requests.get('https://icanhazip.com')
 
@@ -808,7 +810,8 @@ class CryptoTransportLayer(TransportLayer):
         # release sockets and shutdown all connections to peers
         
         try:
-            self.bitmessage_api.close()
+            if self.bitmessage_api != None:
+                self.bitmessage_api.close()
         except Exception, e:
             #might not even be open, not much more we can do on our way out if exception thrown here.
             self.log.error("Could not shutdown bitmessage_api's ServerProxy. " + e.message)
